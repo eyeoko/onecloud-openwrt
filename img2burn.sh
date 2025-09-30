@@ -6,7 +6,8 @@
 
 # 确保 AmlImg 具有执行权限
 chmod +x AmlImg 2>/dev/null
-
+#解压安装镜像
+gzip -dk ./*.img.gz
 # 固定最终输出文件名
 BURN_IMG_NAME="burn.img"
 BOOT_IMG_NAME="openwrt.img"
@@ -17,7 +18,7 @@ ROOTFS_MNT="img"
 # 确保在当前目录下只存在一个待处理的 OpenWrt 镜像文件
 DISK_IMG_LIST=$(ls -1 *.img 2>/dev/null | grep -v 'uboot.img' | grep -v "${BOOT_IMG_NAME}")
 DISK_IMG=$(echo "$DISK_IMG_LIST" | head -n 1)
-gzip -dk ./*.gz
+
 if [ -z "$DISK_IMG" ]; then
     echo "Error: 未找到 OpenWrt 基础镜像文件 (*.img)。请确保已解压 *.img.gz 文件。"
     exit 1
@@ -90,3 +91,4 @@ rm -rf burn "${BOOT_MNT}" "${ROOTFS_MNT}"
 rm "${DISK_IMG}" 2>/dev/null
 rm -f uboot.img
 echo "Script execution completed. Final file: ${BURN_IMG_NAME}.xz"
+
