@@ -1,15 +1,24 @@
 #!/bin/bash
-#!/bin/bash
 # 目标：仅使用当前目录下的文件，生成 burn.img.xz 烧录包。
 
 # --- 0. 环境和文件检查 ---
-
+#下载AmlImg
+echo "下载AmlImg..."
+wget -q -nc https://github.com/eyeoko/onecloud-openwrt/raw/refs/heads/main/AmlImg
 # 确保 AmlImg 具有执行权限
 chmod +x AmlImg 2>/dev/null
 #解压安装镜像
 gzip -dk ./*.img.gz
+
+# --- 插入时间戳变量，用于输出文件名 ---
+# 获取当前时间戳，格式为 YYYYMMDDHHMMSS
+TIMESTAMP=$(date +%Y%m%d%H%M%S)
+# ------------------------------------
+
 # 固定最终输出文件名
-BURN_IMG_NAME="burn.img"
+# *** 修改此处：将时间戳加入文件名中 ***
+BURN_IMG_NAME="burn-${TIMESTAMP}.img"
+# ------------------------------------
 BOOT_IMG_NAME="openwrt.img"
 BOOT_MNT="xd"
 ROOTFS_MNT="img"
@@ -31,7 +40,7 @@ mkdir -p burn "${BOOT_MNT}" "${ROOTFS_MNT}"
 
 # 下载 uboot.img (使用 -nc 避免重复下载)
 echo "正在下载 uboot.img..."
-wget -q -nc https://github.com/xydche/onecloud-openwrt/raw/refs/heads/main/uboot.img
+wget -q -nc https://github.com/eyeoko/onecloud-openwrt/raw/refs/heads/main/uboot.img
 
 # 解包 uboot.img 并解压所有 .gz 文件
 ./AmlImg unpack ./uboot.img burn/
@@ -89,6 +98,6 @@ xz -9 --threads=0 --compress "${BURN_IMG_NAME}"
 # --- 6. 最终清理 ---
 rm -rf burn "${BOOT_MNT}" "${ROOTFS_MNT}"
 rm "${DISK_IMG}" 2>/dev/null
-rm -f uboot.img
+rm -f uboot.img AmlImg
+# 最终输出文件名现在会包含时间戳，例如 burn-20251005104023.img.xz
 echo "Script execution completed. Final file: ${BURN_IMG_NAME}.xz"
-
