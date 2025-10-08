@@ -62,7 +62,7 @@ echo "已设置 Loop 设备: $loop"
 
 # 创建新的 boot 镜像文件
 dd if=/dev/zero of="${BOOT_IMG_NAME}" bs=1M count=600 status=progress
-mkfs.ext4 "${BOOT_IMG_NAME}" || { echo "Error: 格式化 boot 镜像失败。"; exit 1; }
+sudo mkfs.ext4 "${BOOT_IMG_NAME}" || { echo "Error: 格式化 boot 镜像失败。"; exit 1; }
 
 # 挂载分区并复制文件
 sudo mount "${BOOT_IMG_NAME}" "${BOOT_MNT}" || { echo "Error: 挂载新的 boot 镜像失败。"; exit 1; }
